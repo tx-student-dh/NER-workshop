@@ -7,6 +7,14 @@ NER = spacy.load("en_core_web_sm")
 from urllib import request
 from itertools import *
 
+import geopandas as gpd 
+import geopy 
+import matplotlib.pyplot as plt
+from geopy.extra.rate_limiter import RateLimiter
+
+import folium
+from folium.plugins import FastMarkerCluster
+
 #getting text--choose your own URL if you'd like
 
 url = "https://www.gutenberg.org/cache/epub/345/pg345.txt"
@@ -31,27 +39,22 @@ displacy.serve(text1, style="ent")
 
 text1entities = {key: list(g) for key, g in groupby(sorted(text1.ents, key=lambda x: x.label_), lambda x: x.label_)}
 locations = text1entities['GPE'] + text1entities['LOC']
-df = pd.DataFrame(locations)
+df = pd.DataFrame(locations, columns=["Location", "", "", ""])
+df = df.drop(columns=["","",""])
 
-# maybe this for the geocoding
-
-import geopandas as gpd 
-import geopy 
-import matplotlib.pyplot as plt
-from geopy.extra.rate_limiter import RateLimiter
+# geocoding
 
 locator = geopy.geocoders.Nominatim(user_agent=”mygeocoder”)
 geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
 
-df[‘coordinates’] = df[‘address’].apply(lambda loc: tuple(loc.point) if loc else None)
-df[[‘latitude’, ‘longitude’, ‘altitude’]] = pd.DataFrame(df[‘coordinates’].tolist(), index=df.index)
+df['address'] = df['Location'].apply(geocode)
+df['coordinates'] = df['address'].apply(lambda loc: tuple(loc.point) if loc else None)
+df[['latitude', 'longitude', 'altitude']] = pd.DataFrame(df['coordinates'].tolist(), index=df.index)
 df.latitude.isnull().sum()
 df = df[pd.notnull(df[“latitude”])]
 
 # mapping
 
-import folium
-from folium.plugins import FastMarkerCluster
 folium_map = folium.Map(location=[59.338315,18.089960],
   zoom_start=2,
   tiles=’CartoDB dark_matter’)
