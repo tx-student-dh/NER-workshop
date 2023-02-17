@@ -1,0 +1,61 @@
+#packages to import
+
+import os
+import spaCy
+from spaCy import displaCy
+NER = spacy.load("en_core_web_sm")
+from urllib import request
+from itertools import *
+
+#getting text--choose your own URL if you'd like
+
+url = "https://www.gutenberg.org/cache/epub/37106/pg37106.txt"
+response = request.urlopen(url)
+raw = response.read().decode('utf8')
+
+#you might have to change these to cut down the data
+
+text = raw.split(“START OF THE PROJECT GUTENBERG EBOOK”)
+text = text[1]
+text = text.split(“END OF THE PROJECT GUTENBERG EBOOK”)
+text = text[0]
+
+#using NER and seeing what it looks like
+
+text1 = NER(text)
+displacy.serve(text1, style="ent")
+
+# http://localhost:5000/
+
+# now we are going to pull the location
+
+text1entities = {key: list(g) for key, g in groupby(sorted(text1.ents, key=lambda x: x.label_), lambda x: x.label_)}
+locations = text1entities['GPE'] + text1entities['LOC']
+
+# maybe this for the geocoding
+
+import geopandas as gpd 
+import geopy 
+import matplotlib.pyplot as plt
+from geopy.extra.rate_limiter import RateLimiter
+
+locator = geopy.geocoders.Nominatim(user_agent=”mygeocoder”)
+geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
+
+# need to make the dictionary into a df
+
+df[‘coordinates’] = df[‘address’].apply(lambda loc: tuple(loc.point) if loc else None)
+df[[‘latitude’, ‘longitude’, ‘altitude’]] = pd.DataFrame(df[‘coordinates’].tolist(), index=df.index)
+df.latitude.isnull().sum()
+df = df[pd.notnull(df[“latitude”])]
+
+# mapping
+
+import folium
+from folium.plugins import FastMarkerCluster
+folium_map = folium.Map(location=[59.338315,18.089960],
+  zoom_start=2,
+  tiles=’CartoDB dark_matter’)
+FastMarkerCluster(data=list(zip(df[‘latitude’].values, df[‘longitude’].values))).add_to(folium_map)
+folium.LayerControl().add_to(folium_map)
+folium_map
