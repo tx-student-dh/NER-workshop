@@ -61,3 +61,9 @@ folium_map = folium.Map(location=[59.338315,18.089960],
 FastMarkerCluster(data=list(zip(df[‘latitude’].values, df[‘longitude’].values))).add_to(folium_map)
 folium.LayerControl().add_to(folium_map)
 folium_map
+
+#save it
+
+df.to_excel("Workshop_Locations.xlsx")
+output_file = "workshop_map.html"
+folium_map.save(output_file)
