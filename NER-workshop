@@ -16,7 +16,7 @@ raw = response.read().decode('utf8')
 #you might have to change these to cut down the data
 
 text = raw.split("Contents")
-text = text[4]
+text = text[1]
 text = text.split(“END OF THE PROJECT GUTENBERG EBOOK”)
 text = text[0]
 
