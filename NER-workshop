@@ -1,8 +1,8 @@
 #packages to import
 
 import os
-import spaCy
-from spaCy import displaCy
+import spacy
+from spacy import displacy
 NER = spacy.load("en_core_web_sm")
 from urllib import request
 from itertools import *
@@ -15,8 +15,8 @@ raw = response.read().decode('utf8')
 
 #you might have to change these to cut down the data
 
-text = raw.split(“START OF THE PROJECT GUTENBERG EBOOK”)
-text = text[1]
+text = raw.split("Contents")
+text = text[4]
 text = text.split(“END OF THE PROJECT GUTENBERG EBOOK”)
 text = text[0]
 
