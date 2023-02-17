@@ -9,7 +9,7 @@ from itertools import *
 
 #getting text--choose your own URL if you'd like
 
-url = "https://www.gutenberg.org/cache/epub/37106/pg37106.txt"
+url = "https://www.gutenberg.org/cache/epub/345/pg345.txt"
 response = request.urlopen(url)
 raw = response.read().decode('utf8')
 
