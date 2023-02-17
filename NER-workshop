@@ -31,6 +31,7 @@ displacy.serve(text1, style="ent")
 
 text1entities = {key: list(g) for key, g in groupby(sorted(text1.ents, key=lambda x: x.label_), lambda x: x.label_)}
 locations = text1entities['GPE'] + text1entities['LOC']
+df = pd.DataFrame(locations)
 
 # maybe this for the geocoding
 
@@ -41,8 +42,6 @@ from geopy.extra.rate_limiter import RateLimiter
 
 locator = geopy.geocoders.Nominatim(user_agent=”mygeocoder”)
 geocode = RateLimiter(locator.geocode, min_delay_seconds=1)
-
-# need to make the dictionary into a df
 
 df[‘coordinates’] = df[‘address’].apply(lambda loc: tuple(loc.point) if loc else None)
 df[[‘latitude’, ‘longitude’, ‘altitude’]] = pd.DataFrame(df[‘coordinates’].tolist(), index=df.index)
