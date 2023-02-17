@@ -17,7 +17,7 @@ raw = response.read().decode('utf8')
 
 text = raw.split("Contents")
 text = text[1]
-text = text.split(“END OF THE PROJECT GUTENBERG EBOOK”)
+text = text.split(“THE END”)
 text = text[0]
 
 #using NER and seeing what it looks like
