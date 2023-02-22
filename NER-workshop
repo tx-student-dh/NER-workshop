@@ -6,6 +6,7 @@ from spacy import displacy
 NER = spacy.load("en_core_web_sm")
 from urllib import request
 from itertools import *
+import pandas as pd
 
 import geopandas as gpd 
 import geopy 
