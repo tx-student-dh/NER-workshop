@@ -52,14 +52,14 @@ df['address'] = df['Location'].apply(geocode)
 df['coordinates'] = df['address'].apply(lambda loc: tuple(loc.point) if loc else None)
 df[['latitude', 'longitude', 'altitude']] = pd.DataFrame(df['coordinates'].tolist(), index=df.index)
 df.latitude.isnull().sum()
-df = df[pd.notnull(df[“latitude”])]
+df = df[pd.notnull(df["latitude"])]
 
 # mapping
 
 folium_map = folium.Map(location=[59.338315,18.089960],
   zoom_start=2,
   tiles=’CartoDB dark_matter’)
-FastMarkerCluster(data=list(zip(df[‘latitude’].values, df[‘longitude’].values))).add_to(folium_map)
+FastMarkerCluster(data=list(zip(df['latitude'].values, df[‘longitude’].values))).add_to(folium_map)
 folium.LayerControl().add_to(folium_map)
 folium_map
 
